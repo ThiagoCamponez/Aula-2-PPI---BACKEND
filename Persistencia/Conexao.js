@@ -10,14 +10,14 @@ export default async function conectar(){
         return await global.pool.getConnection();
     }
     else{
-        const pool = mysql.createPoll({
+        const pool = mysql.createPool({
             host: 'localhost',
             user: 'root', // Não é recomendado, pois a aplicação vai ter acesso a tudo do banco de dados
-            password: 'Thiago123',
+            password: '',
             port: 3307,
             database: 'backend',
             waitForConnections: true,
-            connectionsLimit: 10,
+            connectionLimit: 10,
             maxIdle: 10, 
             idleTimeout: 360000,
             queueLimit: 0,
@@ -26,7 +26,7 @@ export default async function conectar(){
         });
         
         //Garantindo que haja somente uma cópia desse pool para a minha aplicação
-        global.pool = poll;
+        global.pool = pool;
         return await pool.getConnection();
     }
 }

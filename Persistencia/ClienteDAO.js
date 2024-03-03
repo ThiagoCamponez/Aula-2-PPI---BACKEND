@@ -1,5 +1,5 @@
 import conectar from "./Conexao.js";
-import Modelo from "../Modelos/Cliente.js"
+import Cliente from "../Modelos/Cliente.js";
 
 //Client Access Object  --- É a camada que se conecta com o Banco de Dados
 
@@ -55,6 +55,7 @@ export default class ClienteDAO{
         }
     }
 
+    //Termo de pesquisa pode ser um código do cliente ou ainda o nome
     async consultar(termoDePesquisa){
         if(termoDePesquisa === undefined){
             termoDePesquisa = "";
@@ -62,12 +63,30 @@ export default class ClienteDAO{
 
         let sql="";
         if(isNaN(termoDePesquisa)){//Termo de pesquisa não é um número
-            sql = `SELECT * FROM cliente WHERE nome LIKE '%?%'`;
+            sql = `SELECT * FROM cliente WHERE nome LIKE ?`;
+            termoDePesquisa = '%' + termoDePesquisa + '%';
         }
         else{
             sql = `SELECT * FROM cliente WHERE codigo = ?`;
         }
         const conexao = await conectar();
         const [registros] = await conexao.execute(sql, [termoDePesquisa]);
+        //Utilizar os registros encontrados para criar novos objetos do tipo cliente
+        let listaClientes = [];
+        for (const registro of registros){
+            const cliente = new Cliente(
+                registro.cpf,
+                registro.nome,
+                registro.endereco,
+                registro.bairro,
+                registro.cidade, 
+                registro.estado,
+                registro.telefone,
+                registro.email,
+                registro.codigo
+            );
+            listaClientes.push(cliente);
+        }
+        return listaClientes;
     }
 }

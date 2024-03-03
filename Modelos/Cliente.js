@@ -3,6 +3,8 @@
 //ATRIBUTOS são características de um OBJETO
 //MÉTODOS são as ações que um OBJETO pode executar
 
+import ClienteDAO from "../Persistencia/ClienteDAO.js";
+
 export default class Cliente{     //Assim que define uma classe em JS  
     //export default para exportar a classe, pois será consumida por todo o resto da aplicação
     //Somente por meio de Métodos Públicos é que podemos acessar os atributos de uma classe
@@ -114,5 +116,45 @@ export default class Cliente{     //Assim que define uma classe em JS
         this.#email = novoEmail;
     }
 
+    //Como armazenar os clientes no banco de dados?
 
+    async gravar(){
+        const dao = new ClienteDAO();
+        await dao.gravar(this); //this pode ser compreendido com a seguinte expressão: "Grave a mim mesmo"
+    }
+
+    async atualizar(){
+        const dao = new ClienteDAO();
+        await dao.atualizar(this);
+    }
+    
+    async excluir(){
+        const dao = new ClienteDAO();
+        await dao.excluir(this);
+    }
+    
+    consultar(termoDePesquisa){
+        const dao = new ClienteDAO();
+        return dao.consultar(termoDePesquisa);
+    }
+
+    //Override do método toString da classe pai Object
+
+    toString(){
+        return `Cliente código: ${this.#codigo} - nome: ${this.#nome}`;
+    }
+
+    toJSON(){
+        return{
+            "codigo": this.#codigo,
+            "cpf":this.#cpf,
+            "nome": this.#nome,
+            "endereco": this.#endereco,
+            "bairro": this.#bairro,
+            "cidade": this.#cidade,
+            "estado": this.#estado,
+            "telefone": this.#telefone,
+            "email": this.#email
+        }
+    }
 }
