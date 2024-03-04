@@ -25,29 +25,31 @@ export default class ClienteDAO{
         }
     }
 
-    async atualizar(cliente){
-        if(cliente instanceof Cliente){
+        async atualizar(cliente){
+        if (cliente instanceof Cliente){
             const conexao = await conectar();
-            const sql = `UPDATE client SET cpf = ?, nome = ?, endereco = ?, bairro = ?, cidade = ?, estado = ?, telefone = ?, email = ?, WHERE codigo = ?`;
+            const sql = `UPDATE cliente SET cpf = ?, nome = ?, endereco = ?, bairro = ?,
+                         cidade = ?, estado = ?, telefone = ?, email = ? WHERE id = ?`;
             const parametros = [
                 cliente.cpf,
                 cliente.nome,
                 cliente.endereco,
                 cliente.bairro,
-                cliente.cidade, 
+                cliente.cidade,
                 cliente.estado,
                 cliente.telefone,
                 cliente.email,
                 cliente.codigo
             ];
-            await conexao.execute(sql, parametros);
+
+            await conexao.execute(sql,parametros);
         }
     }
 
     async excluir(cliente){
         if(cliente instanceof Cliente){
             const conexao = await conectar();
-            const sql = `DELETE FROM cliente WHERE codigo = ?`;
+            const sql = `DELETE FROM cliente WHERE id = ?`;
             const parametros = [
                 cliente.codigo
             ]
@@ -67,7 +69,7 @@ export default class ClienteDAO{
             termoDePesquisa = '%' + termoDePesquisa + '%';
         }
         else{
-            sql = `SELECT * FROM cliente WHERE codigo = ?`;
+            sql = `SELECT * FROM cliente WHERE id = ?`;
         }
         const conexao = await conectar();
         const [registros] = await conexao.execute(sql, [termoDePesquisa]);
@@ -75,15 +77,14 @@ export default class ClienteDAO{
         let listaClientes = [];
         for (const registro of registros){
             const cliente = new Cliente(
-                registro.cpf,
+                registro.id,
                 registro.nome,
                 registro.endereco,
                 registro.bairro,
                 registro.cidade, 
                 registro.estado,
                 registro.telefone,
-                registro.email,
-                registro.codigo
+                registro.email
             );
             listaClientes.push(cliente);
         }
